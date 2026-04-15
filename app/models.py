@@ -46,3 +46,15 @@ class ProfileResponse(BaseModel):
     country_id: str
     country_probability: float
     created_at: datetime
+
+
+class ProfileListItem(BaseModel):
+    id: str
+    name: str
+    gender: str
+    age: int
+    age_group: AgeGroup
+    country_id: str
+
+    class Config:
+        from_attributes = True
