@@ -11,12 +11,11 @@ from sqlalchemy import select, func
 def _classify_age(age: int) -> AgeGroup:
     if age <= 12:
         return AgeGroup.CHILD
-    elif age >= 13 and age <= 19:
+    if age <= 19:
         return AgeGroup.TEENAGER
-    elif age >= 20 and age <= 59:
+    if age <= 59:
         return AgeGroup.ADULT
-    else:
-        return AgeGroup.SENIOR
+    return AgeGroup.SENIOR
     
 
 async def enrich_profile_data(name: str) -> dict:
