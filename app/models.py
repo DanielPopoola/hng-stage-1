@@ -10,27 +10,31 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
 
+
 class AgeGroup(StrEnum):
     CHILD = "child"
     TEENAGER = "teenager"
     ADULT = "adult"
-    SENIOR = "senior"           
+    SENIOR = "senior"
 
 
 class Profiles(Base):
     __tablename__ = "profiles"
 
-    id: Mapped[str] = mapped_column(default=lambda: str(uuid6.uuid7()), primary_key=True)
-    name: Mapped[str] = mapped_column(String)
+    id: Mapped[str] = mapped_column(
+        default=lambda: str(uuid6.uuid7()), primary_key=True
+    )
+    name: Mapped[str] = mapped_column(String, unique=True)
     gender: Mapped[str] = mapped_column(String)
     gender_probability: Mapped[float] = mapped_column(Float)
-    sample_size: Mapped[int] = mapped_column(Integer)
     age: Mapped[int] = mapped_column(Integer)
     age_group: Mapped[str] = mapped_column(SQLEnum(AgeGroup))
     country_id: Mapped[str] = mapped_column(String)
+    country_name: Mapped[str] = mapped_column(String)
     country_probability: Mapped[float] = mapped_column(Float)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC)) 
-
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
 
 
 class ProfileResponse(BaseModel):
@@ -50,11 +54,10 @@ class ProfileResponse(BaseModel):
 
 class ProfileListItem(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: str
     name: str
     gender: str
     age: int
     age_group: AgeGroup
     country_id: str
-

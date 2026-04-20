@@ -12,20 +12,20 @@ from .service import (
     enrich_profile_data,
     get_profile,
     get_profiles,
-    delete_profile
+    delete_profile,
 )
 from .models import ProfileResponse, ProfileListItem, AgeGroup
 
 router = APIRouter()
 
+
 class ProfileRequest(BaseModel):
     name: str
 
+
 @router.post("/api/profiles", status_code=201)
 async def create_profile_endpoint(
-    request: ProfileRequest,
-    response: Response,
-    db: Annotated[Session, Depends(get_db)]
+    request: ProfileRequest, response: Response, db: Annotated[Session, Depends(get_db)]
 ):
     if not request.name.strip():
         raise HTTPException(status_code=400, detail="name cannot be empty")
@@ -74,11 +74,9 @@ def list_profiles_endpoint(
         "data": data,
     }
 
+
 @router.get("/api/profiles/{id}")
-def get_profile_endpoint(
-    id: str,
-    db: Annotated[Session, Depends(get_db)]
-):
+def get_profile_endpoint(id: str, db: Annotated[Session, Depends(get_db)]):
     profile = get_profile(id, db)
 
     if not profile:
@@ -91,10 +89,7 @@ def get_profile_endpoint(
 
 
 @router.delete("/api/profiles/{id}", status_code=204)
-def delete_profile_endpoint(
-    id: str,
-    db: Annotated[Session, Depends(get_db)]
-):
+def delete_profile_endpoint(id: str, db: Annotated[Session, Depends(get_db)]):
     deleted = delete_profile(id, db)
 
     if not deleted:

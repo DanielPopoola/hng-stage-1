@@ -8,7 +8,6 @@ from .database import engine, Base
 from .api import router
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -17,12 +16,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"status": "error", "message": exc.detail},
     )
+
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -31,6 +32,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"status": "error", "message": "Invalid request body"},
     )
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -38,10 +40,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.middleware("http")
 async def add_cors_header(request: Request, call_next):
     response = await call_next(request)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
+
 
 app.include_router(router)

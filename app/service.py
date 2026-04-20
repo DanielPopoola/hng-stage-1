@@ -16,7 +16,7 @@ def _classify_age(age: int) -> AgeGroup:
     if age <= 59:
         return AgeGroup.ADULT
     return AgeGroup.SENIOR
-    
+
 
 async def enrich_profile_data(name: str) -> dict:
     age_data, gender_data, nationality_data = await asyncio.gather(
@@ -44,18 +44,18 @@ async def enrich_profile_data(name: str) -> dict:
         "country_id": top_country["country_id"],
         "country_probability": top_country["probability"],
     }
-    
-def create_profile(name: str, enriched_data: dict, db: Session) -> tuple[Profiles, bool]:
+
+
+def create_profile(
+    name: str, enriched_data: dict, db: Session
+) -> tuple[Profiles, bool]:
     stmt = select(Profiles).where(Profiles.name == name)
     existing = db.execute(stmt).scalar_one_or_none()
 
     if existing:
         return existing, False
 
-    profile = Profiles(
-        name=name,
-        **enriched_data
-    )
+    profile = Profiles(name=name, **enriched_data)
 
     db.add(profile)
     db.commit()
@@ -63,10 +63,12 @@ def create_profile(name: str, enriched_data: dict, db: Session) -> tuple[Profile
 
     return profile, True
 
+
 def get_profile(id: str, db: Session) -> Profiles | None:
     stmt = select(Profiles).where(Profiles.id == id)
     result = db.execute(stmt).scalar_one_or_none()
     return result
+
 
 def get_profiles(
     db: Session,
@@ -99,4 +101,3 @@ def delete_profile(id: str, db: Session) -> bool:
     db.delete(profile)
     db.commit()
     return True
-
